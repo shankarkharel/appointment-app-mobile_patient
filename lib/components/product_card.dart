@@ -27,9 +27,7 @@ class ProductCard extends StatelessWidget {
               color: Colors.blueAccent.shade400,
               borderRadius: BorderRadius.circular(10.0),
               border: Border.all(width: 1, color: Colors.blue)),
-          child: Image(
-            image: AssetImage(url),
-          ),
+          child: Image.network(url),
         ),
         Text(name),
         Text(

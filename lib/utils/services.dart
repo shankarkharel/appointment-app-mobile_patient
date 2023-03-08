@@ -3,31 +3,36 @@
 import 'dart:convert';
 import 'dart:developer';
 //import http package to make http requests
+import 'package:appointment_app_mobile/models.dart/Products.dart';
 import 'package:appointment_app_mobile/models.dart/doctors.dart';
 import 'package:appointment_app_mobile/models.dart/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models.dart/appointment.dart';
+import '../models.dart/cart.dart';
+import 'constants.dart' as constants;
 
 class Services {
-  static Uri url = Uri.parse('http://192.168.0.117/backend/app.php');
-  static Uri doctorlist =
-      Uri.parse('http://192.168.0.117/backend/get_doctor.php');
+  static String path = constants.path;
+  static Uri url = Uri.parse('$path/backend/app.php');
+  static Uri doctorlist = Uri.parse('$path/backend/get_doctor.php');
   static Uri appointmentrequest =
-      Uri.parse('http://192.168.0.117/backend/add_appointment.php');
-  static Uri getcurrent =
-      Uri.parse('http://192.168.0.117/backend/get_current.php');
-  static Uri getPendingAppointment =
-      Uri.parse('http://192.168.0.117/backend/appointment.php');
+      Uri.parse('$path/backend/add_appointment.php');
+  static Uri getcurrent = Uri.parse('$path/backend/get_current.php');
+  static Uri getPendingAppointment = Uri.parse('$path/backend/appointment.php');
   static Uri getAcceptedAppointment =
-      Uri.parse('http://192.168.0.117/backend/get_accepted_appointments.php');
+      Uri.parse('$path/backend/get_accepted_appointments.php');
   static Uri getRejectedAppointment =
-      Uri.parse('http://192.168.0.117/backend/get_rejected_appointment.php');
-  static Uri getPatientByid =
-      Uri.parse('http://192.168.0.117/backend/get_patient_by_id.php');
-  static Uri getAcceptedAppointmentsforPatient = Uri.parse(
-      'http://192.168.0.117/backend/get_accepted_appointment_for_patient.php');
+      Uri.parse('$path/backend/get_rejected_appointment.php');
+  static Uri getPatientByid = Uri.parse('$path/backend/get_patient_by_id.php');
+  static Uri getProductByid = Uri.parse('$path/backend/get_product_by_id.php');
+
+  static Uri getAcceptedAppointmentsforPatient =
+      Uri.parse('$path/backend/get_accepted_appointment_for_patient.php');
+
+  static Uri addtoCart = Uri.parse('$path/backend/addtocart.php');
+
+  static Uri getCartitems = Uri.parse('$path/backend/getCartItems.php');
 
   static const _CREATE_TABLE_ACTION = 'CREATE_TABLE';
   static const _ADD_EMP_ACTION = 'ADD_EMP';
@@ -321,5 +326,68 @@ class Services {
     final appointments =
         list.map<Appointment>((json) => Appointment.fromJson(json)).toList();
     return appointments;
+  }
+
+  static Future<bool> addToCart({
+    required String userId,
+    required String itemId,
+  }) async {
+    try {
+      var map = Map<String, dynamic>();
+
+      map['userid'] = userId;
+      map['itemid'] = itemId;
+
+      log("map: ${map.length}");
+      final response = await http.post(addtoCart, body: map);
+      print('addToCart Response: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<List<Cart>> getCurrentCartItems() async {
+    var map = Map<String, dynamic>();
+
+    var shared = await SharedPreferences.getInstance();
+
+    var currentUserId = shared.getString("id");
+    //log("Current user email: ${currentUserEmail.toString()}");
+
+    map['id'] = currentUserId;
+    final response = await http.post(getCartitems, body: map);
+    if (response.statusCode == 200) {
+      log("200");
+      log("current cart items: ${response.body.toLowerCase()}");
+    }
+    var list = json.decode(response.body);
+    final cartItemArray =
+        list.map<Cart>((json) => Cart.fromJson(json)).toList();
+    return cartItemArray;
+  }
+
+  static Future<List<Product>> getProductById(String id) async {
+    try {
+      var map = Map<String, dynamic>();
+      map['id'] = id;
+
+      final response = await http.post(getProductByid, body: map); //
+
+      var list = json.decode(response.body);
+      log("getProductsbyid: ${response.body.toString()}");
+      final doctorsArray =
+          list.map<Product>((json) => Product.fromJson(json)).toList();
+      log("products by id list${response.body.toString()}");
+      return doctorsArray;
+    } catch (e) {
+      log("Error getting product by id $id");
+      log("error: ${e.toString()}");
+      return [];
+    }
   }
 }

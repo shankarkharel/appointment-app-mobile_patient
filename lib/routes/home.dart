@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+//as
   Future<void> fetchAcceptedAppointments() async {
     if (!isDoctor) {
       final acceptedAppointments =
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         String dateFormatted = DateFormat('EEEE, d MMMM').format(date);
         doctor = await Services.getPatientById(appointment.patientid!);
         appointmentList.add(AppointmentCard(
-          doctorName: "Dr. ${doctor.first.firstName} ${doctor.first.lastName}",
+          doctorName: " ${doctor.first.firstName} ${doctor.first.lastName}",
           appoinmentDate: dateFormatted,
           appointmentTime: appointment.time!,
           description: appointment.description!,

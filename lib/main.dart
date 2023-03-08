@@ -18,11 +18,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: {
         'home': (context) => const HomePage(),
         'store': (context) => StoreHomeScreen(),
         'login': (context) => const LoginPage(),
-        'cart': (context) => const Cart()
+        //  'cart': (context) => const Cart()
       },
       title: 'Appointment App',
       theme: ThemeData(
