@@ -19,12 +19,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  // double get _cartTotal {
-  //   return widget.cartItems.fold(
-  //     0.0,
-  //     (total, cartItem) => total + cartItem.quantity * cartItem.price,
-  //   );
-  // }
   Future<List<List<Product>>>? getProductsDetails() async {
     List<List<Product>> productList = [];
 
@@ -47,28 +41,67 @@ class _CartPageState extends State<CartPage> {
 
   void incrementQuantity() {
     setState(() {
-      quantity++;
+      //quantity++;
     });
   }
 
   void decrementQuantity() {
     setState(() {
       if (quantity > 1) {
-        quantity--;
+        // quantity--;
       }
     });
   }
 
   String path = constant.path;
-  void deleteItem() {
-    // implement delete item function here
+  void deleteItem(String itemid) {
+    setState(() {
+      quantity++;
+      Services.deleteItem(itemid);
+      quantity--;
+    });
   }
+
+  void confirmOrder(String itemid) {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage your Cart'),
+        title: const Text('My AppBar'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Order Confirmation'),
+                    content: const Text(
+                        'Are you sure you want to order all of  the following items?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Yes'),
+                        onPressed: () {
+                          // Perform order operation
+                          // Services.addOrder(itemid: )
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: getProductsDetails(),
@@ -131,7 +164,9 @@ class _CartPageState extends State<CartPage> {
                                           ),
                                           const SizedBox(width: 8),
                                           ElevatedButton(
-                                            onPressed: deleteItem,
+                                            onPressed: () {
+                                              deleteItem(list.first.itemId!);
+                                            },
                                             style: ElevatedButton.styleFrom(
                                               primary: Colors.red,
                                             ),

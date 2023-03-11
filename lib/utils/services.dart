@@ -40,6 +40,8 @@ class Services {
   static const _DELETE_EMP_ACTION = 'DELETE_EMP';
   static const _CHECK_IF_LOGGED_IN = 'CHECK_IF_LOGGED_IN';
   static const _GET_CURRENT = 'GET_CURRENT';
+  static const _GET_ITEM_DELETED = 'deleteitemtbyid';
+  static const _ADD_ORDER_ACTION = 'addorder';
 
   // Method to create the table Employees.
   static Future<String> createTable() async {
@@ -361,10 +363,7 @@ class Services {
 
     map['id'] = currentUserId;
     final response = await http.post(getCartitems, body: map);
-    if (response.statusCode == 200) {
-      log("200");
-      log("current cart items: ${response.body.toLowerCase()}");
-    }
+    if (response.statusCode == 200) {}
     var list = json.decode(response.body);
     final cartItemArray =
         list.map<Cart>((json) => Cart.fromJson(json)).toList();
@@ -388,6 +387,51 @@ class Services {
       log("Error getting product by id $id");
       log("error: ${e.toString()}");
       return [];
+    }
+  }
+
+  static Future<String> deleteItem(String itemId) async {
+    try {
+      var map = Map<String, dynamic>();
+      var shared = await SharedPreferences.getInstance();
+
+      var currentUserId = shared.getString("id");
+      map['action'] = _GET_ITEM_DELETED;
+      map['emp_id'] = itemId;
+      map['userid'] = currentUserId;
+      final response = await http.post(url, body: map);
+      print('deleteEmployee Response: ${response.body}');
+      if (200 == response.statusCode) {
+        return response.body;
+      } else {
+        return "error";
+      }
+    } catch (e) {
+      return "error"; // returning just an "error" string to keep this simple...
+    }
+  }
+
+  // Method to add users to the database...
+  static Future<bool> addOrder({required String itemid}) async {
+    try {
+      var shared = await SharedPreferences.getInstance();
+
+      var currentUserId = shared.getString("id");
+      var map = Map<String, dynamic>();
+      map['action'] = _ADD_ORDER_ACTION;
+      map['itemid'] = itemid;
+      map['userid'] = currentUserId;
+
+      log("map: ${map.length}");
+      final response = await http.post(url, body: map);
+      print('addEmployee Response: ${response.body}');
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }

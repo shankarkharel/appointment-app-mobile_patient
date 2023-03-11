@@ -40,11 +40,13 @@ class _StoreHomeScreenState extends State<StoreHomeScreen> {
   @override
   void initState() {
     super.initState();
-    initialFetch();
+    // initialFetch();
   }
 
   @override
   Widget build(BuildContext context) {
+    initialFetch();
+
     return Scaffold(
       drawer: const AppDrawer(),
       appBar: MyAppBar(
@@ -114,7 +116,6 @@ class BuildProductList extends StatelessWidget {
     );
   }
 
-  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: allProducts(),
