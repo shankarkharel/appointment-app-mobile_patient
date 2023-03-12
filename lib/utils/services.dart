@@ -412,19 +412,19 @@ class Services {
   }
 
   // Method to add users to the database...
-  static Future<bool> addOrder({required String itemid}) async {
+  static Future<bool> addOrder() async {
     try {
       var shared = await SharedPreferences.getInstance();
 
       var currentUserId = shared.getString("id");
       var map = Map<String, dynamic>();
       map['action'] = _ADD_ORDER_ACTION;
-      map['itemid'] = itemid;
+
       map['userid'] = currentUserId;
 
       log("map: ${map.length}");
       final response = await http.post(url, body: map);
-      print('addEmployee Response: ${response.body}');
+      log('confirm order Response: ${response.body}');
       if (response.statusCode == 200) {
         return true;
       } else {

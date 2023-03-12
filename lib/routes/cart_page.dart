@@ -69,39 +69,6 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My AppBar'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Order Confirmation'),
-                    content: const Text(
-                        'Are you sure you want to order all of  the following items?'),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Yes'),
-                        onPressed: () {
-                          // Perform order operation
-                          // Services.addOrder(itemid: )
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
       ),
       body: FutureBuilder(
         future: getProductsDetails(),
@@ -189,6 +156,38 @@ class _CartPageState extends State<CartPage> {
                 );
         },
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Order Confirmation'),
+                content: const Text(
+                    'Are you sure you want to order all of  the following items?'),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Yes'),
+                    onPressed: () {
+                      // Perform order operation
+                      Services.addOrder();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        label: const Text('Proceed to Checkout'),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
