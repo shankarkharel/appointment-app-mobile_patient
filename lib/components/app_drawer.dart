@@ -24,6 +24,8 @@ class AppDrawer extends StatelessWidget {
             automaticallyImplyLeading: false,
           ),
           tile(context, Icons.home, 'Home', "home"),
+          tile(context, Icons.select_all_sharp, 'View My Orders', 'order'),
+
           tile(context, Icons.logout, 'Log out', 'login'),
 
           //tile(context, Icons.payment, 'My Products', UserProductsScreen.ROUTE),

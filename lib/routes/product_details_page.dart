@@ -96,7 +96,25 @@ class ProductDetailsPage extends StatelessWidget {
         onPressed: () async {
           var pref = await SharedPreferences.getInstance();
           var id = pref.getString("id");
-          Services.addToCart(userId: id!, itemId: itemid);
+
+          bool response = await Services.addToCart(userId: id!, itemId: itemid);
+          if (response == true) {
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Item Added to cart'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          } else {
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Couldn\'t add item to cart'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         },
         icon: const Icon(Icons.add_shopping_cart),
         label: const Text('Add to Cart'),

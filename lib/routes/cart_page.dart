@@ -28,6 +28,7 @@ class _CartPageState extends State<CartPage> {
       productList.add(product);
     }
     log(productList.toString());
+
     return productList;
   }
 
@@ -41,7 +42,7 @@ class _CartPageState extends State<CartPage> {
 
   void incrementQuantity() {
     setState(() {
-      //quantity++;
+      quantity++;
     });
   }
 
@@ -152,7 +153,7 @@ class _CartPageState extends State<CartPage> {
                     );
                   })
               : const Center(
-                  child: CircularProgressIndicator(),
+                  child: Text("Nothing To display"),
                 );
         },
       ),
@@ -174,9 +175,29 @@ class _CartPageState extends State<CartPage> {
                   ),
                   TextButton(
                     child: const Text('Yes'),
-                    onPressed: () {
+                    onPressed: () async {
                       // Perform order operation
-                      Services.addOrder();
+                      bool response = await Services.addOrder();
+                      // ignore: use_build_context_synchronously
+                      if (response == true) {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Item Ordered Sucessfully'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      } else {
+                        // ignore: use_build_context_synchronously
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Couldn\'t Order items'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                      incrementQuantity();
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     },
                   ),

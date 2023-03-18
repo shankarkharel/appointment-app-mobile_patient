@@ -2,6 +2,7 @@
 
 import 'package:appointment_app_mobile/routes/home.dart';
 import 'package:appointment_app_mobile/routes/login.dart';
+import 'package:appointment_app_mobile/routes/show_orders.dart';
 import 'package:appointment_app_mobile/routes/store_home.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         'home': (context) => const HomePage(),
         'store': (context) => StoreHomeScreen(),
         'login': (context) => const LoginPage(),
+        'order': (context) => const OrdersPage(),
         //  'cart': (context) => const Cart()
       },
       title: 'Appointment App',

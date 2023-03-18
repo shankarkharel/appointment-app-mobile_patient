@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models.dart/appointment.dart';
 import '../models.dart/cart.dart';
+import '../models.dart/orders.dart';
 import 'constants.dart' as constants;
 
 class Services {
@@ -26,13 +27,18 @@ class Services {
       Uri.parse('$path/backend/get_rejected_appointment.php');
   static Uri getPatientByid = Uri.parse('$path/backend/get_patient_by_id.php');
   static Uri getProductByid = Uri.parse('$path/backend/get_product_by_id.php');
+  static Uri getOrderByid = Uri.parse('$path/backend/get_orders_by_id.php');
 
   static Uri getAcceptedAppointmentsforPatient =
       Uri.parse('$path/backend/get_accepted_appointment_for_patient.php');
 
+  static Uri addtoOrder = Uri.parse('$path/backend/add_order.php');
+
   static Uri addtoCart = Uri.parse('$path/backend/addtocart.php');
 
   static Uri getCartitems = Uri.parse('$path/backend/getCartItems.php');
+  static Uri deleteAllItemFromCart =
+      Uri.parse('$path/backend/delete_all_from_cart.php');
 
   static const _CREATE_TABLE_ACTION = 'CREATE_TABLE';
   static const _ADD_EMP_ACTION = 'ADD_EMP';
@@ -41,7 +47,6 @@ class Services {
   static const _CHECK_IF_LOGGED_IN = 'CHECK_IF_LOGGED_IN';
   static const _GET_CURRENT = 'GET_CURRENT';
   static const _GET_ITEM_DELETED = 'deleteitemtbyid';
-  static const _ADD_ORDER_ACTION = 'addorder';
 
   // Method to create the table Employees.
   static Future<String> createTable() async {
@@ -418,13 +423,14 @@ class Services {
 
       var currentUserId = shared.getString("id");
       var map = Map<String, dynamic>();
-      map['action'] = _ADD_ORDER_ACTION;
 
       map['userid'] = currentUserId;
 
       log("map: ${map.length}");
-      final response = await http.post(url, body: map);
-      log('confirm order Response: ${response.body}');
+      final response = await http.post(addtoOrder, body: map);
+      final response2 = await http.post(deleteAllItemFromCart, body: map);
+      log(response2.statusCode.toString());
+      log('add order response: ${response.body}');
       if (response.statusCode == 200) {
         return true;
       } else {
@@ -433,5 +439,22 @@ class Services {
     } catch (e) {
       return false;
     }
+  }
+
+  static Future<List<Order>> getOrderItemsById() async {
+    var map = <String, dynamic>{};
+
+    var shared = await SharedPreferences.getInstance();
+
+    var currentUserId = shared.getString("id");
+    //log("Current user email: ${currentUserEmail.toString()}");
+
+    map['id'] = currentUserId;
+    final response = await http.post(getOrderByid, body: map);
+    if (response.statusCode == 200) {}
+    var list = json.decode(response.body);
+    final cartItemArray =
+        list.map<Order>((json) => Order.fromJson(json)).toList();
+    return cartItemArray;
   }
 }
